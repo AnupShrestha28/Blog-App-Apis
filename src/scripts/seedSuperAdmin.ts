@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import dotenv from "dotenv";
 
-dotenv.config(); 
+dotenv.config();
 
 const prisma = new PrismaClient();
 
@@ -11,10 +11,8 @@ async function seedSuperAdmin() {
   const email = "superadmin@gmail.com";
   const password = "admin123";
 
-  // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  // Create Super Admin User
   await prisma.user.create({
     data: {
       username,

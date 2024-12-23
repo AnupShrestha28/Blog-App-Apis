@@ -17,6 +17,10 @@ export const register = async (
       throw new Error("All fields (username, email, password) are required.");
     }
 
+    if (password.length < 6 || password.length > 10) {
+      throw new Error("Password must be between 6 and 10 characters.");
+    }
+
     const userWithSameUsername = await prisma.user.findUnique({
       where: { username },
     });
@@ -56,6 +60,10 @@ export const login = async (username: string, password: string) => {
   try {
     if (!username || !password) {
       throw new Error("Username and password are required.");
+    }
+
+    if (password.length < 6 || password.length > 10) {
+      throw new Error("Password must be between 6 and 10 characters.");
     }
 
     const user = await prisma.user.findUnique({
