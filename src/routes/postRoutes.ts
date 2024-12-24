@@ -10,6 +10,7 @@ import { authenticateUser } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
+// Post Routes
 router.post("/", authenticateUser, createPostHandler);
 
 router.get("/", authenticateUser, getAllPostsHandler);
