@@ -4,7 +4,7 @@ import { createComment, getCommentsByPostId } from "../services/commentService";
 export const createCommentHandler = async (req: Request, res: Response) => {
   const { content } = req.body;
   const { postId } = req.params;
-  const { user } = req; 
+  const { user } = req;
 
   try {
     if (!user) throw new Error("User not authenticated.");

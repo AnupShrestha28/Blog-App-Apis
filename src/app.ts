@@ -9,7 +9,7 @@ app.use(express.json());
 // User Routes
 app.use("/api/users", userRoutes);
 
-// Blog Routes
+// Blog and Comment routes
 app.use("/api/posts", postRoutes, commentRoutes);
 
 export default app;
