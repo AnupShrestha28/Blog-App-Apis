@@ -1,32 +1,35 @@
 import { PrismaClient } from "@prisma/client";
+import { validateUUID } from "../utils/validationUtils";
 
 const prisma = new PrismaClient();
 
 export const createComment = async (
-  content: string,
+  comment: string,
   postId: string,
-  authorId: string
+  authorId?: string
 ) => {
-  if (!content || !postId || !authorId) {
-    throw new Error("Content, postId, and authorId are required.");
+  if (!comment) {
+    throw new Error("Comment field is required.");
   }
 
-  const comment = await prisma.comment.create({
+  const newComment = await prisma.comment.create({
     data: {
-      content,
+      content: comment,
       postId,
-      authorId,
+      authorId: authorId || "",
     },
     include: {
       author: { select: { username: true } },
     },
   });
 
-  return comment;
+  return { message: "Comment created successfully", comment: newComment };
 };
 
 export const getCommentsByPostId = async (postId: string) => {
   try {
+    validateUUID(postId);
+
     const postWithComments = await prisma.post.findUnique({
       where: { id: postId },
       include: {
@@ -41,8 +44,12 @@ export const getCommentsByPostId = async (postId: string) => {
       },
     });
 
-    if (!postWithComments) {
-      throw new Error("Post not found.");
+    if (
+      !postWithComments ||
+      !postWithComments.comments ||
+      postWithComments.comments.length === 0
+    ) {
+      throw new Error("No comments found for this post.");
     }
 
     return {
@@ -53,7 +60,11 @@ export const getCommentsByPostId = async (postId: string) => {
         authorUsername: postWithComments.author.username,
         postId: postWithComments.id,
       },
-      comments: postWithComments.comments,
+      comments: postWithComments.comments.map((comment) => ({
+        content: comment.content,
+        createdAt: comment.createdAt,
+        authorUsername: comment.author.username,
+      })),
     };
   } catch (error) {
     throw new Error(

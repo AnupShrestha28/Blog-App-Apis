@@ -3,7 +3,7 @@ import { authenticateUser } from "../middlewares/authMiddleware";
 import {
   createCommentHandler,
   getCommentsHandler,
-} from "../controllers/CommentController";
+} from "../controllers/commentController";
 
 const router = express.Router();
 

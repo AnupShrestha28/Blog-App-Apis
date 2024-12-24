@@ -5,7 +5,7 @@ import {
   getPostByIdHandler,
   updatePostHandler,
   deletePostHandler,
-} from "../controllers/PostController";
+} from "../controllers/postController";
 import { authenticateUser } from "../middlewares/authMiddleware";
 
 const router = express.Router();

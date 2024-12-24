@@ -13,17 +13,7 @@ export const createPostHandler = async (
 ): Promise<void> => {
   try {
     const { title, content } = req.body;
-    const userId = req.user?.id;
-
-    if (!title || !content) {
-      res.status(400).json({ message: "Title and content are required." });
-      return;
-    }
-
-    if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
+    const userId = req.user?.id || "";
 
     const post = await createPost(title, content, userId);
     res.status(201).json(post);
@@ -54,7 +44,7 @@ export const getPostByIdHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const post = await getPostById(id);
     if (!post) {
       res.status(404).json({ message: "Post not found" });
@@ -73,21 +63,9 @@ export const updatePostHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = req.params.id;
     const { title, content } = req.body;
-    const userId = req.user?.id;
-
-    if (!title && !content) {
-      res
-        .status(400)
-        .json({ message: "Title or content is required for update." });
-      return;
-    }
-
-    if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
+    const userId = req.user?.id || "";
 
     const updatedPost = await updatePost(id, title, content, userId);
     if (!updatedPost) {
@@ -109,13 +87,8 @@ export const deletePostHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id } = req.params;
-    const userId = req.user?.id;
-
-    if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
-    }
+    const id = req.params.id;
+    const userId = req.user?.id || "";
 
     const deletedPost = await deletePost(id, userId);
     if (!deletedPost) {
@@ -123,7 +96,7 @@ export const deletePostHandler = async (
       return;
     }
 
-    res.status(200).json({ message: "Post deleted successfully." });
+    res.status(200).json(deletedPost);
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong",

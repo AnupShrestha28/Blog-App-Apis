@@ -1,17 +1,21 @@
 import { Request, Response } from "express";
 import { createComment, getCommentsByPostId } from "../services/commentService";
 
-export const createCommentHandler = async (req: Request, res: Response) => {
-  const { content } = req.body;
-  const { postId } = req.params;
-  const { user } = req;
-
+export const createCommentHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    if (!user) throw new Error("User not authenticated.");
-    const comment = await createComment(content, postId, user.id);
-    res.status(201).json(comment);
+    const { comment } = req.body;
+    const { postId } = req.params;
+    const user = req.user;
+
+    const newComment = await createComment(comment, postId, user?.id);
+    res.status(201).json({ comment: newComment });
   } catch (error) {
-    res.status(404).json({ message: (error as Error).message });
+    res.status(400).json({
+      error: error instanceof Error ? error.message : "Error creating comment.",
+    });
   }
 };
 
