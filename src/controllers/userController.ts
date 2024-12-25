@@ -3,6 +3,7 @@ import {
   register,
   login,
   getUserDetails,
+  updateUserDetails,
 } from "../services/userService";
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -41,4 +42,22 @@ export const getUserProfile = async (req: Request, res: Response) => {
   }
 };
 
+export const updateUserProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const { username, email, oldPassword, newPassword } = req.body;
 
+    const updatedUser = await updateUserDetails(
+      userId,
+      username,
+      email,
+      oldPassword,
+      newPassword
+    );
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};

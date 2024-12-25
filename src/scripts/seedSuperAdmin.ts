@@ -7,9 +7,9 @@ dotenv.config();
 const prisma = new PrismaClient();
 
 async function seedSuperAdmin() {
-  const username = "superadmin";
-  const email = "superadmin@gmail.com";
-  const password = "admin123";
+  const username = process.env.SUPERADMIN_USERNAME || "superadmin";
+  const email = process.env.SUPERADMIN_EMAIL || "superadmin@gmail.com";
+  const password = process.env.SUPERADMIN_PASSWORD || "admin123";
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
