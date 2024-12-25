@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
-import { register, login } from "../services/userService";
+import {
+  register,
+  login,
+  getUserDetails,
+} from "../services/userService";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -24,3 +28,17 @@ export const loginUser = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getUserProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const user = await getUserDetails(userId);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+

@@ -91,3 +91,24 @@ export const login = async (username: string, password: string) => {
     throw new Error(error instanceof Error ? error.message : "Unknown error");
   }
 };
+
+export const getUserDetails = async (userId: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, username: true, email: true, role: true },
+    });
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    return user;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Error fetching user details."
+    );
+  }
+};
+
+
