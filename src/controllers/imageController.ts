@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { addImageToPost } from "../services/imageService";
 
-export const uploadImageHandler = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const uploadImageHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { postId } = req.params;
 
@@ -12,7 +16,6 @@ export const uploadImageHandler = async (req: Request, res: Response, next: Next
 
     const imageUrl = req.file.path;
 
-    // Save image details in the database
     const image = await addImageToPost(postId, imageUrl);
 
     res.status(201).json({
@@ -20,6 +23,6 @@ export const uploadImageHandler = async (req: Request, res: Response, next: Next
       image,
     });
   } catch (error) {
-    next(error); // Pass the error to the Express error handler
+    next(error);
   }
 };

@@ -11,10 +11,8 @@ app.use("/uploads", express.static("uploads")); // Serve uploaded images
 // User Routes
 app.use("/api/users", userRoutes);
 
-// Blog and Comment routes
-app.use("/api/posts", postRoutes, commentRoutes);
+// Blog, Comment and Image routes
+app.use("/api/posts", postRoutes, commentRoutes, imageRoutes);
 
-// Image Routes
-app.use("/api/posts", imageRoutes);
 
 export default app;

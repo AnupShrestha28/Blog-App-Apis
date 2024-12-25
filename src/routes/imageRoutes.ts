@@ -4,7 +4,7 @@ import { uploadImageHandler } from "../controllers/imageController";
 
 const router = Router();
 
-// Route to upload an image for a specific post
+// Image Routes
 router.post("/:postId/images", upload.single("image"), uploadImageHandler);
 
 export default router;
