@@ -1,6 +1,10 @@
 import { Router } from "express";
 import upload from "../multer/multerConfig";
-import { uploadImageHandler } from "../controllers/imageController";
+import {
+  uploadImageHandler,
+  deleteImageHandler,
+  updateImageHandler,
+} from "../controllers/imageController";
 import { authenticateUser } from "../middlewares/authMiddleware";
 
 const router = Router();
@@ -12,5 +16,14 @@ router.post(
   upload.single("image"),
   uploadImageHandler
 );
+
+router.put(
+  "/:postId/images/:imageId",
+  authenticateUser,
+  upload.single("image"),
+  updateImageHandler
+);
+
+router.delete("/:postId/images/:imageId", authenticateUser, deleteImageHandler);
 
 export default router;
