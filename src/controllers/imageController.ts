@@ -9,20 +9,9 @@ export const uploadImageHandler = async (
   try {
     const { postId } = req.params;
     const userId = req.user?.id;
+    const file = req.file;
 
-    if (!userId) {
-      res.status(401).json({ error: "Unauthorized. Please log in." });
-      return;
-    }
-
-    if (!req.file) {
-      res.status(400).json({ error: "No file uploaded." });
-      return;
-    }
-
-    const imageUrl = req.file.path;
-
-    const image = await addImageToPost(postId, userId, imageUrl);
+    const image = await addImageToPost(postId, userId, file);
 
     res.status(201).json({
       message: "Image uploaded successfully.",

@@ -8,22 +8,30 @@ export const createComment = async (
   postId: string,
   authorId?: string
 ) => {
-  if (!comment) {
-    throw new Error("Comment field is required.");
+  try {
+    validateUUID(postId);
+
+    if (!comment) {
+      throw new Error("Comment field is required.");
+    }
+
+    const newComment = await prisma.comment.create({
+      data: {
+        content: comment,
+        postId,
+        authorId: authorId || "",
+      },
+      include: {
+        author: { select: { username: true } },
+      },
+    });
+
+    return { message: "Comment created successfully", comment: newComment };
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "An error occurred."
+    );
   }
-
-  const newComment = await prisma.comment.create({
-    data: {
-      content: comment,
-      postId,
-      authorId: authorId || "",
-    },
-    include: {
-      author: { select: { username: true } },
-    },
-  });
-
-  return { message: "Comment created successfully", comment: newComment };
 };
 
 export const getCommentsByPostId = async (postId: string) => {

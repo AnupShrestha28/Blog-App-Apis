@@ -1,13 +1,24 @@
 import { PrismaClient } from "@prisma/client";
+import { validateUUID } from "../utils/validationUtils";
 
 const prisma = new PrismaClient();
 
 export const addImageToPost = async (
   postId: string,
-  userId: string,
-  imageUrl: string
+  userId: string | undefined,
+  file: Express.Multer.File | undefined
 ) => {
   try {
+    validateUUID(postId);
+
+    if (!userId) {
+      throw new Error("Unauthorized. Please log in.");
+    }
+
+    if (!file) {
+      throw new Error("No file uploaded.");
+    }
+
     const post = await prisma.post.findUnique({
       where: { id: postId },
     });
@@ -24,7 +35,7 @@ export const addImageToPost = async (
 
     const image = await prisma.image.create({
       data: {
-        imageUrl,
+        imageUrl: file.path,
         postId,
       },
     });
@@ -32,7 +43,7 @@ export const addImageToPost = async (
     return image;
   } catch (error) {
     throw new Error(
-      error instanceof Error ? error.message : "Error uploading image."
+      error instanceof Error ? error.message : "An error occurred."
     );
   }
 };
