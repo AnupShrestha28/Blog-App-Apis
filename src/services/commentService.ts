@@ -3,6 +3,18 @@ import { validateUUID } from "../utils/validationUtils";
 
 const prisma = new PrismaClient();
 
+const createResponse = (
+  success: boolean,
+  message: string,
+  data: any = null,
+  statusCode: number = 200
+) => ({
+  success,
+  message,
+  data,
+  statusCode,
+});
+
 export const createComment = async (
   comment: string,
   postId: string,
@@ -12,7 +24,7 @@ export const createComment = async (
     validateUUID(postId);
 
     if (!comment) {
-      throw new Error("Comment field is required.");
+      return createResponse(false, "Comment field is required.", null, 400);
     }
 
     const newComment = await prisma.comment.create({
@@ -26,10 +38,20 @@ export const createComment = async (
       },
     });
 
-    return { message: "Comment created successfully", comment: newComment };
+    return createResponse(
+      true,
+      "Comment created successfully.",
+      newComment,
+      201
+    );
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "An error occurred."
+    return createResponse(
+      false,
+      error instanceof Error
+        ? error.message
+        : "An error occurred while creating the comment.",
+      null,
+      500
     );
   }
 };
@@ -53,32 +75,38 @@ export const getCommentsByPostId = async (postId: string) => {
       },
     });
 
-    if (
-      !postWithComments ||
-      !postWithComments.comments ||
-      postWithComments.comments.length === 0
-    ) {
-      throw new Error("No comments found for this post.");
+    if (!postWithComments) {
+      return createResponse(false, "Post not found.", null, 404);
     }
 
-    return {
-      post: {
-        title: postWithComments.title,
-        content: postWithComments.content,
-        createdAt: postWithComments.createdAt,
-        authorUsername: postWithComments.author.username,
-        postId: postWithComments.id,
+    return createResponse(
+      true,
+      "Comments fetched successfully.",
+      {
+        post: {
+          title: postWithComments.title,
+          content: postWithComments.content,
+          createdAt: postWithComments.createdAt,
+          authorUsername: postWithComments.author.username,
+          postId: postWithComments.id,
+        },
+        comments: postWithComments.comments.map((comment) => ({
+          commentId: comment.id,
+          content: comment.content,
+          createdAt: comment.createdAt,
+          authorUsername: comment.author.username,
+        })),
       },
-      comments: postWithComments.comments.map((comment) => ({
-        commentId: comment.id, // Include the comment ID in the response
-        content: comment.content,
-        createdAt: comment.createdAt,
-        authorUsername: comment.author.username,
-      })),
-    };
+      200
+    );
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error fetching comments."
+    return createResponse(
+      false,
+      error instanceof Error
+        ? error.message
+        : "An error occurred while fetching comments.",
+      null,
+      500
     );
   }
 };
@@ -89,23 +117,20 @@ export const updateComment = async (
   userId: string
 ) => {
   try {
-    if (!userId) {
-      throw new Error("User not authenticated.");
-    }
-
-    if (!content) {
-      throw new Error("Comment content is required.");
-    }
-
     validateUUID(id);
 
-    const comment = await prisma.comment.findUnique({
-      where: { id },
-    });
+    if (!content) {
+      return createResponse(false, "Comment content is required.", null, 400);
+    }
+
+    const comment = await prisma.comment.findUnique({ where: { id } });
 
     if (!comment || comment.authorId !== userId) {
-      throw new Error(
-        "Comment not found or you are not authorized to edit this comment."
+      return createResponse(
+        false,
+        "Comment not found or you are not authorized to edit this comment.",
+        null,
+        403
       );
     }
 
@@ -114,40 +139,50 @@ export const updateComment = async (
       data: { content },
     });
 
-    return updatedComment;
+    return createResponse(
+      true,
+      "Comment updated successfully.",
+      updatedComment,
+      200
+    );
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error updating comment."
+    return createResponse(
+      false,
+      error instanceof Error
+        ? error.message
+        : "An error occurred while updating the comment.",
+      null,
+      500
     );
   }
 };
 
 export const deleteComment = async (id: string, userId: string) => {
   try {
-    if (!userId) {
-      throw new Error("User not authenticated.");
-    }
-
     validateUUID(id);
 
-    const comment = await prisma.comment.findUnique({
-      where: { id },
-    });
+    const comment = await prisma.comment.findUnique({ where: { id } });
 
     if (!comment || comment.authorId !== userId) {
-      throw new Error(
-        "Comment not found or you are not authorized to delete this comment."
+      return createResponse(
+        false,
+        "Comment not found or you are not authorized to delete this comment.",
+        null,
+        403
       );
     }
 
-    await prisma.comment.delete({
-      where: { id },
-    });
+    await prisma.comment.delete({ where: { id } });
 
-    return { message: "Comment deleted successfully." };
+    return createResponse(true, "Comment deleted successfully.", null, 200);
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error deleting comment."
+    return createResponse(
+      false,
+      error instanceof Error
+        ? error.message
+        : "An error occurred while deleting the comment.",
+      null,
+      500
     );
   }
 };

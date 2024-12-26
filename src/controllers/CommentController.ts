@@ -15,23 +15,30 @@ export const createCommentHandler = async (
     const { postId } = req.params;
     const user = req.user;
 
-    const newComment = await createComment(comment, postId, user?.id);
-    res.status(201).json({ comment: newComment });
+    const result = await createComment(comment, postId, user?.id);
+    res.status(result.statusCode).json(result);
   } catch (error) {
-    res.status(400).json({
-      error: error instanceof Error ? error.message : "Error creating comment.",
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while creating the comment.",
     });
   }
 };
 
-export const getCommentsHandler = async (req: Request, res: Response) => {
+export const getCommentsHandler = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { postId } = req.params;
 
   try {
-    const comments = await getCommentsByPostId(postId);
-    res.status(200).json(comments);
+    const result = await getCommentsByPostId(postId);
+    res.status(result.statusCode).json(result);
   } catch (error) {
-    res.status(404).json({ message: (error as Error).message });
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching comments.",
+    });
   }
 };
 
@@ -42,15 +49,15 @@ export const updateCommentController = async (
   try {
     const { id } = req.params;
     const { comment } = req.body;
-    const userId = req.user?.id;
-    const updatedComment = await updateComment(id, comment, userId!);
-    res.status(200).json(updatedComment);
+    const userId = req.user!.id;
+
+    const result = await updateComment(id, comment, userId);
+    res.status(result.statusCode).json(result);
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred." });
-    }
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while updating the comment.",
+    });
   }
 };
 
@@ -60,14 +67,14 @@ export const deleteCommentController = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const userId = req.user?.id;
-    await deleteComment(id, userId!);
-    res.status(200).json({ message: "Comment deleted successfully." });
+    const userId = req.user!.id;
+
+    const result = await deleteComment(id, userId);
+    res.status(result.statusCode).json(result);
   } catch (error) {
-    if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "An unknown error occurred." });
-    }
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while deleting the comment.",
+    });
   }
 };

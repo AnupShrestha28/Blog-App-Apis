@@ -15,11 +15,25 @@ export const register = async (
 ) => {
   try {
     if (!username || !email || !password) {
-      throw new Error("All fields (username, email, password) are required.");
+      return {
+        status: "error",
+        statusCode: 400,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "All fields (username, email, password) are required.",
+        },
+      };
     }
 
     if (password.length < 6 || password.length > 10) {
-      throw new Error("Password must be between 6 and 10 characters.");
+      return {
+        status: "error",
+        statusCode: 400,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Password must be between 6 and 10 characters.",
+        },
+      };
     }
 
     const userWithSameUsername = await prisma.user.findUnique({
@@ -27,7 +41,14 @@ export const register = async (
     });
 
     if (userWithSameUsername) {
-      throw new Error("Username already exists.");
+      return {
+        status: "error",
+        statusCode: 409,
+        error: {
+          code: "CONFLICT",
+          message: "Username already exists.",
+        },
+      };
     }
 
     const userWithSameEmail = await prisma.user.findUnique({
@@ -35,7 +56,14 @@ export const register = async (
     });
 
     if (userWithSameEmail) {
-      throw new Error("Email already exists.");
+      return {
+        status: "error",
+        statusCode: 409,
+        error: {
+          code: "CONFLICT",
+          message: "Email already exists.",
+        },
+      };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -49,22 +77,46 @@ export const register = async (
       },
     });
 
-    return { message: "User registered successfully.", user };
+    return {
+      status: "success",
+      statusCode: 201,
+      data: { user },
+      message: "User registered successfully.",
+    };
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error creating user"
-    );
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: error instanceof Error ? error.message : "Error creating user",
+      },
+    };
   }
 };
 
 export const login = async (username: string, password: string) => {
   try {
     if (!username || !password) {
-      throw new Error("Username and password are required.");
+      return {
+        status: "error",
+        statusCode: 400,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Username and password are required.",
+        },
+      };
     }
 
     if (password.length < 6 || password.length > 10) {
-      throw new Error("Password must be between 6 and 10 characters.");
+      return {
+        status: "error",
+        statusCode: 400,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Password must be between 6 and 10 characters.",
+        },
+      };
     }
 
     const user = await prisma.user.findUnique({
@@ -72,13 +124,27 @@ export const login = async (username: string, password: string) => {
     });
 
     if (!user) {
-      throw new Error("Username is incorrect.");
+      return {
+        status: "error",
+        statusCode: 404,
+        error: {
+          code: "NOT_FOUND",
+          message: "Username is incorrect.",
+        },
+      };
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      throw new Error("Password is incorrect.");
+      return {
+        status: "error",
+        statusCode: 401,
+        error: {
+          code: "AUTHENTICATION_ERROR",
+          message: "Password is incorrect.",
+        },
+      };
     }
 
     const token = jwt.sign(
@@ -87,9 +153,21 @@ export const login = async (username: string, password: string) => {
       { expiresIn: "1h" }
     );
 
-    return { message: "Login successfully", token };
+    return {
+      status: "success",
+      statusCode: 200,
+      data: { token },
+      message: "Login successfully.",
+    };
   } catch (error) {
-    throw new Error(error instanceof Error ? error.message : "Unknown error");
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: error instanceof Error ? error.message : "Unknown error",
+      },
+    };
   }
 };
 
@@ -98,11 +176,23 @@ export const getAllUsers = async () => {
     const users = await prisma.user.findMany({
       select: { id: true, username: true, email: true, role: true },
     });
-    return users;
+
+    return {
+      status: "success",
+      statusCode: 200,
+      data: { users },
+      message: "Users retrieved successfully.",
+    };
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error retrieving users."
-    );
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          error instanceof Error ? error.message : "Error retrieving users.",
+      },
+    };
   }
 };
 
@@ -116,14 +206,32 @@ export const getUserById = async (id: string) => {
     });
 
     if (!user) {
-      throw new Error("User not found.");
+      return {
+        status: "error",
+        statusCode: 404,
+        error: {
+          code: "NOT_FOUND",
+          message: "User not found.",
+        },
+      };
     }
 
-    return user;
+    return {
+      status: "success",
+      statusCode: 200,
+      data: { user },
+      message: "User retrieved successfully.",
+    };
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error retrieving user."
-    );
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          error instanceof Error ? error.message : "Error retrieving user.",
+      },
+    };
   }
 };
 
@@ -134,17 +242,34 @@ export const deleteUser = async (userId: string) => {
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
     if (!user) {
-      throw new Error("User not found.");
+      return {
+        status: "error",
+        statusCode: 404,
+        error: {
+          code: "NOT_FOUND",
+          message: "User not found.",
+        },
+      };
     }
 
     await prisma.user.delete({
       where: { id: userId },
     });
 
-    return { message: "User and related data deleted successfully." };
+    return {
+      status: "success",
+      statusCode: 200,
+      message: "User and related data deleted successfully.",
+    };
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error deleting user."
-    );
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          error instanceof Error ? error.message : "Error deleting user.",
+      },
+    };
   }
 };

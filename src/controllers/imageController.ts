@@ -15,12 +15,9 @@ export const uploadImageHandler = async (
     const userId = (req.user as any).id;
     const file = req.file;
 
-    const image = await addImageToPost(postId, userId, file);
+    const response = await addImageToPost(postId, userId, file);
 
-    res.status(201).json({
-      message: "Image uploaded successfully.",
-      image,
-    });
+    res.status(response.statusCode).json(response);
   } catch (error) {
     next(error);
   }
@@ -36,17 +33,9 @@ export const updateImageHandler = async (
     const userId = (req.user as any).id;
     const file = req.file;
 
-    const updatedImage = await updateImageForPost(
-      postId,
-      imageId,
-      userId,
-      file
-    );
+    const response = await updateImageForPost(postId, imageId, userId, file);
 
-    res.status(200).json({
-      message: "Image updated successfully.",
-      image: updatedImage,
-    });
+    res.status(response.statusCode).json(response);
   } catch (error) {
     next(error);
   }
@@ -61,11 +50,9 @@ export const deleteImageHandler = async (
     const { postId, imageId } = req.params;
     const userId = (req.user as any).id;
 
-    await deleteImageFromPost(postId, imageId, userId);
+    const response = await deleteImageFromPost(postId, imageId, userId);
 
-    res.status(200).json({
-      message: "Image deleted successfully.",
-    });
+    res.status(response.statusCode).json(response);
   } catch (error) {
     next(error);
   }

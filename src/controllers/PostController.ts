@@ -14,9 +14,8 @@ export const createPostHandler = async (
   try {
     const { title, content } = req.body;
     const userId = req.user?.id || "";
-
-    const post = await createPost(title, content, userId);
-    res.status(201).json(post);
+    const result = await createPost(title, content, userId);
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong",
@@ -30,10 +29,11 @@ export const getAllPostsHandler = async (
   res: Response
 ): Promise<void> => {
   try {
-    const posts = await getAllPosts();
-    res.status(200).json(posts);
+    const result = await getAllPosts();
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({
+      message: "Something went wrong",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
@@ -45,14 +45,11 @@ export const getPostByIdHandler = async (
 ): Promise<void> => {
   try {
     const id = req.params.id;
-    const post = await getPostById(id);
-    if (!post) {
-      res.status(404).json({ message: "Post not found" });
-      return;
-    }
-    res.status(200).json(post);
+    const result = await getPostById(id);
+    res.status(200).json(result);
   } catch (error) {
     res.status(404).json({
+      message: "Something went wrong",
       error: error instanceof Error ? error.message : "Unknown error",
     });
   }
@@ -66,14 +63,8 @@ export const updatePostHandler = async (
     const id = req.params.id;
     const { title, content } = req.body;
     const userId = req.user?.id || "";
-
-    const updatedPost = await updatePost(id, title, content, userId);
-    if (!updatedPost) {
-      res.status(404).json({ message: "Post not found or unauthorized" });
-      return;
-    }
-
-    res.status(200).json(updatedPost);
+    const result = await updatePost(id, title, content, userId);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong",
@@ -89,14 +80,8 @@ export const deletePostHandler = async (
   try {
     const id = req.params.id;
     const userId = req.user?.id || "";
-
-    const deletedPost = await deletePost(id, userId);
-    if (!deletedPost) {
-      res.status(404).json({ message: "Post not found or unauthorized" });
-      return;
-    }
-
-    res.status(200).json(deletedPost);
+    const result = await deletePost(id, userId);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
       message: "Something went wrong",

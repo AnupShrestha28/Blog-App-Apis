@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -15,14 +14,34 @@ export const getUserDetails = async (userId: string) => {
     });
 
     if (!user) {
-      throw new Error("User not found.");
+      return {
+        status: "error",
+        statusCode: 404,
+        error: {
+          code: "NOT_FOUND",
+          message: "User not found.",
+        },
+      };
     }
 
-    return user;
+    return {
+      status: "success",
+      statusCode: 200,
+      data: user,
+      message: "User details fetched successfully.",
+    };
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error fetching user details."
-    );
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Error fetching user details.",
+      },
+    };
   }
 };
 
@@ -34,6 +53,20 @@ export const updateUserDetails = async (
   newPassword?: string
 ) => {
   try {
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!existingUser) {
+      return {
+        status: "error",
+        statusCode: 404,
+        error: {
+          code: "NOT_FOUND",
+          message: "User not found.",
+        },
+      };
+    }
+
     const data: { username?: string; email?: string; password?: string } = {};
 
     if (username) {
@@ -41,7 +74,14 @@ export const updateUserDetails = async (
         where: { username },
       });
       if (userWithSameUsername && userWithSameUsername.id !== userId) {
-        throw new Error("Username already exists.");
+        return {
+          status: "error",
+          statusCode: 409,
+          error: {
+            code: "CONFLICT",
+            message: "Username already exists.",
+          },
+        };
       }
       data.username = username;
     }
@@ -51,34 +91,54 @@ export const updateUserDetails = async (
         where: { email },
       });
       if (userWithSameEmail && userWithSameEmail.id !== userId) {
-        throw new Error("Email already exists.");
+        return {
+          status: "error",
+          statusCode: 409,
+          error: {
+            code: "CONFLICT",
+            message: "Email already exists.",
+          },
+        };
       }
       data.email = email;
     }
 
     if (newPassword) {
       if (!oldPassword) {
-        throw new Error("Old password is required to update the password.");
-      }
-
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (!user) {
-        throw new Error("User not found.");
+        return {
+          status: "error",
+          statusCode: 400,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Old password is required to update the password.",
+          },
+        };
       }
 
       const isOldPasswordValid = await bcrypt.compare(
         oldPassword,
-        user.password
+        existingUser.password
       );
       if (!isOldPasswordValid) {
-        throw new Error("Old password is incorrect.");
+        return {
+          status: "error",
+          statusCode: 401,
+          error: {
+            code: "AUTHENTICATION_ERROR",
+            message: "Old password is incorrect.",
+          },
+        };
       }
 
       if (newPassword.length < 6 || newPassword.length > 10) {
-        throw new Error("New password must be between 6 and 10 characters.");
+        return {
+          status: "error",
+          statusCode: 400,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "New password must be between 6 and 10 characters.",
+          },
+        };
       }
 
       data.password = await bcrypt.hash(newPassword, 10);
@@ -90,16 +150,26 @@ export const updateUserDetails = async (
     });
 
     return {
-      message: "Profile updated successfully.",
-      user: {
+      status: "success",
+      statusCode: 200,
+      data: {
         id: updatedUser.id,
         username: updatedUser.username,
         email: updatedUser.email,
       },
+      message: "Profile updated successfully.",
     };
   } catch (error) {
-    throw new Error(
-      error instanceof Error ? error.message : "Error updating user details."
-    );
+    return {
+      status: "error",
+      statusCode: 500,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message:
+          error instanceof Error
+            ? error.message
+            : "Error updating user details.",
+      },
+    };
   }
 };
