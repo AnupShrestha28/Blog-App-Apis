@@ -36,6 +36,18 @@ export const register = async (
       };
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return {
+        status: "error",
+        statusCode: 400,
+        error: {
+          code: "VALIDATION_ERROR",
+          message: "Invalid email format.",
+        },
+      };
+    }
+
     const userWithSameUsername = await prisma.user.findUnique({
       where: { username },
     });

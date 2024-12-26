@@ -8,7 +8,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "*": ["node_modules/*"]
+      "*": ["node_modules/*"],
+      "swagger-jsdoc": ["node_modules/@types/swagger-jsdoc"],
+      "swagger-ui-express": ["node_modules/@types/swagger-ui-express"]
     },
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },

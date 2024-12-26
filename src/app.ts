@@ -12,7 +12,7 @@ app.use("/uploads", express.static("uploads"));
 // User Routes
 app.use("/api/users", userRoutes);
 
-// Blog, Comment and Image routes
+// Unified Post, Comment, and Image Routes
 app.use("/api/posts", postRoutes, commentRoutes, imageRoutes);
 
 app.use(errorHandler);
