@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { validateUUID } from "../utils/validationUtils";
 
 dotenv.config();
 
@@ -94,6 +95,8 @@ export const login = async (username: string, password: string) => {
 
 export const deleteUser = async (userId: string) => {
   try {
+    validateUUID(userId);
+
     const user = await prisma.user.findUnique({ where: { id: userId } });
 
     if (!user) {

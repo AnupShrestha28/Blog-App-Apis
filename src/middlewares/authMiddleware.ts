@@ -26,7 +26,7 @@ export const authenticateUser = async (
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
-      select: { id: true, username: true, role: true }, // Explicitly fetch all required fields
+      select: { id: true, username: true, role: true },
     });
 
     if (!user) {
@@ -34,7 +34,6 @@ export const authenticateUser = async (
       return;
     }
 
-    // Attach the user to the request object
     req.user = {
       id: user.id,
       username: user.username,

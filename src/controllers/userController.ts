@@ -31,15 +31,14 @@ export const deleteUserController = async (
 ): Promise<void> => {
   const { id } = req.params;
 
-  if (!id) {
-    res.status(400).json({ message: "User ID is required." });
-    return;
-  }
-
   try {
-    await deleteUser(id);
-    res.status(200).json({ message: "User deleted successfully." });
+    const result = await deleteUser(id);
+    res.status(200).json({ message: result.message });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting user." });
+    if (error instanceof Error) {
+      res.status(500).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: "An unexpected error occurred." });
+    }
   }
 };
