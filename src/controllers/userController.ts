@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { register, login, deleteUser, getAllUsers, getUserById } from "../services/userService";
+import {
+  register,
+  login,
+  deleteUser,
+  getAllUsers,
+  getUserById,
+} from "../services/userService";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -25,8 +31,10 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-
-export const getAllUsersController = async (req: Request, res: Response): Promise<void> => {
+export const getAllUsersController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const users = await getAllUsers();
     res.status(200).json(users);
@@ -39,7 +47,10 @@ export const getAllUsersController = async (req: Request, res: Response): Promis
   }
 };
 
-export const getUserByIdController = async (req: Request, res: Response): Promise<void> => {
+export const getUserByIdController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const { id } = req.params;
     const user = await getUserById(id);

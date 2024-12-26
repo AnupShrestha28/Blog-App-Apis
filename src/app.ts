@@ -7,7 +7,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 
 const app = express();
 app.use(express.json());
-app.use("/uploads", express.static("uploads")); 
+app.use("/uploads", express.static("uploads"));
 
 // User Routes
 app.use("/api/users", userRoutes);

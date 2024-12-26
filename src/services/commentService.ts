@@ -43,6 +43,7 @@ export const getCommentsByPostId = async (postId: string) => {
       include: {
         comments: {
           select: {
+            id: true,
             content: true,
             createdAt: true,
             author: { select: { username: true } },
@@ -69,6 +70,7 @@ export const getCommentsByPostId = async (postId: string) => {
         postId: postWithComments.id,
       },
       comments: postWithComments.comments.map((comment) => ({
+        commentId: comment.id, // Include the comment ID in the response
         content: comment.content,
         createdAt: comment.createdAt,
         authorUsername: comment.author.username,
@@ -77,6 +79,75 @@ export const getCommentsByPostId = async (postId: string) => {
   } catch (error) {
     throw new Error(
       error instanceof Error ? error.message : "Error fetching comments."
+    );
+  }
+};
+
+export const updateComment = async (
+  id: string,
+  content: string,
+  userId: string
+) => {
+  try {
+    if (!userId) {
+      throw new Error("User not authenticated.");
+    }
+
+    if (!content) {
+      throw new Error("Comment content is required.");
+    }
+
+    validateUUID(id);
+
+    const comment = await prisma.comment.findUnique({
+      where: { id },
+    });
+
+    if (!comment || comment.authorId !== userId) {
+      throw new Error(
+        "Comment not found or you are not authorized to edit this comment."
+      );
+    }
+
+    const updatedComment = await prisma.comment.update({
+      where: { id },
+      data: { content },
+    });
+
+    return updatedComment;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Error updating comment."
+    );
+  }
+};
+
+export const deleteComment = async (id: string, userId: string) => {
+  try {
+    if (!userId) {
+      throw new Error("User not authenticated.");
+    }
+
+    validateUUID(id);
+
+    const comment = await prisma.comment.findUnique({
+      where: { id },
+    });
+
+    if (!comment || comment.authorId !== userId) {
+      throw new Error(
+        "Comment not found or you are not authorized to delete this comment."
+      );
+    }
+
+    await prisma.comment.delete({
+      where: { id },
+    });
+
+    return { message: "Comment deleted successfully." };
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Error deleting comment."
     );
   }
 };
