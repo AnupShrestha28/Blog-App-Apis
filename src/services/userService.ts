@@ -93,6 +93,40 @@ export const login = async (username: string, password: string) => {
   }
 };
 
+export const getAllUsers = async () => {
+  try {
+    const users = await prisma.user.findMany({
+      select: { id: true, username: true, email: true, role: true },
+    });
+    return users;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Error retrieving users."
+    );
+  }
+};
+
+export const getUserById = async (id: string) => {
+  try {
+    validateUUID(id);
+
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { id: true, username: true, email: true, role: true },
+    });
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    return user;
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Error retrieving user."
+    );
+  }
+};
+
 export const deleteUser = async (userId: string) => {
   try {
     validateUUID(userId);

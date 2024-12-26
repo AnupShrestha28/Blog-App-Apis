@@ -3,6 +3,8 @@ import {
   registerUser,
   loginUser,
   deleteUserController,
+  getAllUsersController,
+  getUserByIdController,
 } from "../controllers/userController";
 import { authenticateUser } from "../middlewares/authMiddleware";
 import { requireAdmin } from "../middlewares/roleMiddleware";
@@ -14,6 +16,8 @@ router.post("/register", registerUser);
 router.post("/login", loginUser);
 
 // Admin-only route to delete a user
+router.get("/", authenticateUser, requireAdmin, getAllUsersController);
+router.get("/:id", authenticateUser, requireAdmin, getUserByIdController);
 router.delete("/:id", authenticateUser, requireAdmin, deleteUserController);
 
 export default router;
