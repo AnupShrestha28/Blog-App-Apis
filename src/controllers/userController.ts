@@ -1,10 +1,5 @@
 import { Request, Response } from "express";
-import {
-  register,
-  login,
-  getUserDetails,
-  updateUserDetails,
-} from "../services/userService";
+import { register, login, deleteUser } from "../services/userService";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -30,34 +25,21 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getUserProfile = async (req: Request, res: Response) => {
-  try {
-    const userId = (req as any).user.id;
-    const user = await getUserDetails(userId);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+export const deleteUserController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ message: "User ID is required." });
+    return;
   }
-};
 
-export const updateUserProfile = async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
-    const { username, email, oldPassword, newPassword } = req.body;
-
-    const updatedUser = await updateUserDetails(
-      userId,
-      username,
-      email,
-      oldPassword,
-      newPassword
-    );
-    res.status(200).json(updatedUser);
+    await deleteUser(id);
+    res.status(200).json({ message: "User deleted successfully." });
   } catch (error) {
-    res.status(500).json({
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
+    res.status(500).json({ message: "Error deleting user." });
   }
 };
