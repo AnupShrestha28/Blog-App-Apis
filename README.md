@@ -78,4 +78,7 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
 
 6. Start the server:
    ```bash
-   npm run dev  
+   npm run dev
+
+## API Endpoints
+### Authentication
