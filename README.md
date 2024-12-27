@@ -132,6 +132,7 @@ Swagger has been integrated to provide a detailed, interactive API documentation
 - **View a User by ID**: `GET /api/users/:id`
 
 
-Database Design
-You can view the [Database Design]([url](https://docs.google.com/spreadsheets/d/1TS0P98fkaPfpy-1nxk1lgsul3GFN-E5cANbp7bhFVEA/edit?gid=0#gid=0)) on Google Sheets for a detailed structure of the database.
+
+In this example, the **[Database Design]([https://docs.google.com/spreadsheets/d/your-sheet-id-here](https://docs.google.com/spreadsheets/d/1TS0P98fkaPfpy-1nxk1lgsul3GFN-E5cANbp7bhFVEA/edit?gid=0#gid=0))** link will be clickable, and users can easily navigate to the Google Sheets document with your database design. Just replace `your-sheet-id-here` with the actual ID from your Google Sheets URL.
+
 
