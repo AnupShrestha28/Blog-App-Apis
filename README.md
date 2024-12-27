@@ -70,16 +70,20 @@ A scalable backend solution for a blogging platform, built with **Node.js** and 
    SUPERADMIN_EMAIL="superadmin@gmail.com"
    SUPERADMIN_PASSWORD="admin123"
 
-4. Run database migrations:
+4. Migrate the database:
+   ```bash
+   npx prisma generate
+
+5. Run database migrations:
    ```bash
    npx prisma migrate dev
 
-5. Seed the database with Super Admin user:
+6. Seed the database with Super Admin user:
    Run the following command to seed the Super Admin user:
    ```bash
    npx ts-node src/scripts/seedSuperAdmin.ts
 
-6. Start the server:
+7. Start the server:
    ```bash
    npm run dev
 
