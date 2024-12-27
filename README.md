@@ -9,9 +9,8 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
 1. [Features](#features)  
 2. [Tech Stack](#tech-stack)  
 3. [Installation](#installation)  
-4. [Usage](#usage)  
-5. [API Documentation](#api-documentation)  
-6. [API Endpoints](#api-endpoints)    
+4. [API Documentation](#api-documentation)  
+5. [API Endpoints](#api-endpoints)    
 
 ---
 
