@@ -129,18 +129,11 @@ Swagger has been integrated to provide a detailed, interactive API documentation
 - **View Profile**: `GET /api/users/profile`
 - **Update Profile**: `PATCH /api/users/profile`
 
-## **Admin Access (Super Admin)**
-
-- **View All Users**: `GET /api/users`  
-  Fetched a list of all users in the system, including their basic details.
-
-- **Delete User**: `DELETE /api/users/:id`  
-  Fetched and deleted the user with the specified ID from the system.
-
-- **View a User by ID**: `GET /api/users/:id`  
+(### Admin Access (Super Admin)
+- **View All Users**: `GET /api/users`
+- **Delete User**: `DELETE /api/users/:id`
+- **View a User by ID**: `GET /api/users/:id`
   Fetched a user by their ID, along with their posts and related images.
-
-
 
 
 ## Database Design
