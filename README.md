@@ -134,7 +134,7 @@ Swagger has been integrated to provide a detailed, interactive API documentation
 - **Delete User**: `DELETE /api/users/:id`
 - **View a User by ID**: `GET /api/users/:id`
 
-  **Fetched a user by their ID, along with their posts and related images.
+  Fetched a user by their ID, along with their posts and related images.
 
 
 ## Database Design
