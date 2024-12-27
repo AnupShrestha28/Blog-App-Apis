@@ -84,6 +84,20 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
    ```bash
    npm run dev
 
+# API Documentation
+
+Swagger has been integrated to provide a detailed, interactive API documentation.
+
+## Accessing Swagger Documentation
+
+1. **Start the server**:
+   Run the following command to start the server:
+   ```bash
+   npm run dev
+2. Open your browser and navigate to:
+   ```bash
+   http://localhost:<PORT>/api-docs
+
 ## API Endpoints
 
 ### Authentication
