@@ -1,4 +1,4 @@
-# Blogging Platform Backend  
+# Blogging Platform  
 
 A scalable backend solution for a blogging platform, built with **Node.js** and **TypeScript**. This project includes essential functionalities such as user authentication, blog post management, comment handling, image uploads, and more, leveraging **PostgreSQL** with **Prisma ORM** for database management. Swagger is integrated for seamless API documentation.
 
