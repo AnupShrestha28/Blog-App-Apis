@@ -62,7 +62,7 @@ A scalable backend solution for a blogging platform, built with **Node.js** and 
 3. Set up environment variables:
    Create a .env file in the root directory with the following:
    ```bash
-   DATABASE_URL=your_postgres_database_url  
+   DATABASE_URL=postgresql://postgres:<password>@localhost:5432/blogapp?schema=public  
    JWT_SECRET=your_secret_key  
    PORT=your_port
 
