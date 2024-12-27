@@ -67,6 +67,10 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
    JWT_SECRET=your_secret_key  
    PORT=your_port
 
+   SUPERADMIN_USERNAME="superadmin"
+   SUPERADMIN_EMAIL="superadmin@gmail.com"
+   SUPERADMIN_PASSWORD="admin123"
+
 4. Run database migrations:
    ```bash
    npx prisma migrate dev
@@ -90,11 +94,13 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
 - **Create Post**: `POST /api/posts`
 - **Get All Posts**: `GET /api/posts`
 - **Get Post by ID**: `GET /api/posts/:id`
+- **Update Post**: `PUT /api/posts/:id`
+- **Delete Post**: `DELETE /api/posts/:id`
 
 ### Comments
 - **Add Comment**: `POST /api/posts/:postId/comments`
-- **Update Comment**: `PATCH /api/posts/:postId/comments/:commentId`
-- **Delete Comment**: `DELETE /api/posts/:postId/comments/:commentId`
+- **Update Comment**: `PATCH /api/posts/delete/:commentId`
+- **Delete Comment**: `DELETE /api/posts/delete/:commentId`
 - **Get Comments**: `GET /api/posts/:postId/comments`
 
 ### Image Upload
