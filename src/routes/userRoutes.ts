@@ -1,19 +1,21 @@
-import express from 'express';
+import express from "express";
 import {
   registerUser,
   loginUser,
   deleteUserController,
   getAllUsersController,
   getUserByIdController,
-} from '../controllers/userController';
-import { authenticateUser } from '../middlewares/authMiddleware';
-import { requireAdmin } from '../middlewares/roleMiddleware';
+} from "../controllers/userController";
+import { authenticateUser } from "../middlewares/authMiddleware";
+import { requireAdmin } from "../middlewares/roleMiddleware";
+
+const router = express.Router();
 
 /**
  * @swagger
  * tags:
  *   name: Users
- *   description: User management endpoints
+ *   description: API for User related
  */
 
 /**
@@ -47,7 +49,6 @@ import { requireAdmin } from '../middlewares/roleMiddleware';
  *       500:
  *         description: Internal server error
  */
-const router = express.Router();
 router.post("/register", registerUser);
 
 /**

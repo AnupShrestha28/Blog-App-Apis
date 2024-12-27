@@ -172,7 +172,7 @@ export const deletePost = async (id: string, authorId: string) => {
     return {
       success: true,
       statusCode: 200,
-      message: "Blog post and its comments have been deleted successfully.",
+      message: "Blog post have been deleted successfully.",
     };
   } catch (error) {
     return {

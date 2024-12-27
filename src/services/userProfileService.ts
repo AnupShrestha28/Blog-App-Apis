@@ -1,12 +1,20 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const prisma = new PrismaClient();
 
-export const getUserDetails = async (userId: string) => {
+export const getUserDetails = async (userId: string | undefined) => {
+  if (!userId) {
+    return {
+      status: "error",
+      statusCode: 401,
+      error: {
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Authentication required.",
+      },
+    };
+  }
+
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -17,10 +25,7 @@ export const getUserDetails = async (userId: string) => {
       return {
         status: "error",
         statusCode: 404,
-        error: {
-          code: "NOT_FOUND",
-          message: "User not found.",
-        },
+        error: { code: "NOT_FOUND", message: "User not found." },
       };
     }
 
@@ -31,6 +36,8 @@ export const getUserDetails = async (userId: string) => {
       message: "User details fetched successfully.",
     };
   } catch (error) {
+    console.error("Error fetching user profile:", error);
+
     return {
       status: "error",
       statusCode: 500,
@@ -46,80 +53,84 @@ export const getUserDetails = async (userId: string) => {
 };
 
 export const updateUserDetails = async (
-  userId: string,
-  username?: string,
-  email?: string,
-  oldPassword?: string,
-  newPassword?: string
+  userId: string | undefined,
+  data: {
+    username?: string;
+    email?: string;
+    oldPassword?: string;
+    newPassword?: string;
+  }
 ) => {
+  if (!userId) {
+    return {
+      status: "error",
+      statusCode: 401,
+      error: {
+        code: "AUTHENTICATION_REQUIRED",
+        message: "Authentication required.",
+      },
+    };
+  }
+
   try {
-    const existingUser = await prisma.user.findUnique({
-      where: { id: userId },
-    });
-    if (!existingUser) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
       return {
         status: "error",
         statusCode: 404,
-        error: {
-          code: "NOT_FOUND",
-          message: "User not found.",
-        },
+        error: { code: "NOT_FOUND", message: "User not found." },
       };
     }
 
-    const data: { username?: string; email?: string; password?: string } = {};
+    const updates: { username?: string; email?: string; password?: string } =
+      {};
 
-    if (username) {
-      const userWithSameUsername = await prisma.user.findUnique({
-        where: { username },
+    if (data.username) {
+      const existingUsername = await prisma.user.findUnique({
+        where: { username: data.username },
       });
-      if (userWithSameUsername && userWithSameUsername.id !== userId) {
+      if (existingUsername && existingUsername.id !== userId) {
         return {
           status: "error",
           statusCode: 409,
-          error: {
-            code: "CONFLICT",
-            message: "Username already exists.",
-          },
+          error: { code: "CONFLICT", message: "Username already exists." },
         };
       }
-      data.username = username;
+      updates.username = data.username;
     }
 
-    if (email) {
-      const userWithSameEmail = await prisma.user.findUnique({
-        where: { email },
+    if (data.email) {
+      const existingEmail = await prisma.user.findUnique({
+        where: { email: data.email },
       });
-      if (userWithSameEmail && userWithSameEmail.id !== userId) {
+      if (existingEmail && existingEmail.id !== userId) {
         return {
           status: "error",
           statusCode: 409,
-          error: {
-            code: "CONFLICT",
-            message: "Email already exists.",
-          },
+          error: { code: "CONFLICT", message: "Email already exists." },
         };
       }
-      data.email = email;
+      updates.email = data.email;
     }
 
-    if (newPassword) {
-      if (!oldPassword) {
+    if (data.newPassword) {
+      if (!data.oldPassword) {
         return {
           status: "error",
           statusCode: 400,
           error: {
             code: "VALIDATION_ERROR",
-            message: "Old password is required to update the password.",
+            message: "Old password is required to update password.",
           },
         };
       }
 
-      const isOldPasswordValid = await bcrypt.compare(
-        oldPassword,
-        existingUser.password
+      const isPasswordValid = await bcrypt.compare(
+        data.oldPassword,
+        user.password
       );
-      if (!isOldPasswordValid) {
+      if (!isPasswordValid) {
         return {
           status: "error",
           statusCode: 401,
@@ -130,23 +141,12 @@ export const updateUserDetails = async (
         };
       }
 
-      if (newPassword.length < 6 || newPassword.length > 10) {
-        return {
-          status: "error",
-          statusCode: 400,
-          error: {
-            code: "VALIDATION_ERROR",
-            message: "New password must be between 6 and 10 characters.",
-          },
-        };
-      }
-
-      data.password = await bcrypt.hash(newPassword, 10);
+      updates.password = await bcrypt.hash(data.newPassword, 10);
     }
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data,
+      data: updates,
     });
 
     return {
@@ -168,7 +168,7 @@ export const updateUserDetails = async (
         message:
           error instanceof Error
             ? error.message
-            : "Error updating user details.",
+            : "Error updating user profile.",
       },
     };
   }

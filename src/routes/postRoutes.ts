@@ -10,6 +10,9 @@ import { authenticateUser } from "../middlewares/authMiddleware";
 
 const router = express.Router();
 
+// Apply middleware globally to all routes
+router.use(authenticateUser);
+
 /**
  * @swagger
  * tags:
@@ -24,7 +27,7 @@ const router = express.Router();
  *     summary: Create a new post
  *     tags: [Posts]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -45,7 +48,7 @@ const router = express.Router();
  *       400:
  *         description: Validation error
  */
-router.post("/", authenticateUser, createPostHandler);
+router.post("/", createPostHandler);
 
 /**
  * @swagger
@@ -54,23 +57,23 @@ router.post("/", authenticateUser, createPostHandler);
  *     summary: Get all posts
  *     tags: [Posts]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: List of posts
  */
-router.get("/", authenticateUser, getAllPostsHandler);
+router.get("/", getAllPostsHandler);
 
 /**
  * @swagger
- * /posts/{id}:
+ * /posts/{postId}:
  *   get:
  *     summary: Get post by ID
  *     tags: [Posts]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - name: id
+ *       - name: postId
  *         in: path
  *         required: true
  *         schema:
@@ -81,18 +84,18 @@ router.get("/", authenticateUser, getAllPostsHandler);
  *       404:
  *         description: Post not found
  */
-router.get("/:id", authenticateUser, getPostByIdHandler);
+router.get("/:id", getPostByIdHandler);
 
 /**
  * @swagger
- * /posts/{id}:
+ * /posts/{postId}:
  *   put:
  *     summary: Update a post
  *     tags: [Posts]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - name: id
+ *       - name: postId
  *         in: path
  *         required: true
  *         schema:
@@ -114,18 +117,18 @@ router.get("/:id", authenticateUser, getPostByIdHandler);
  *       404:
  *         description: Post not found
  */
-router.put("/:id", authenticateUser, updatePostHandler);
+router.put("/:id", updatePostHandler);
 
 /**
  * @swagger
- * /posts/{id}:
+ * /posts/{postId}:
  *   delete:
  *     summary: Delete a post
  *     tags: [Posts]
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     parameters:
- *       - name: id
+ *       - name: postId
  *         in: path
  *         required: true
  *         schema:
@@ -136,6 +139,6 @@ router.put("/:id", authenticateUser, updatePostHandler);
  *       404:
  *         description: Post not found
  */
-router.delete("/:id", authenticateUser, deletePostHandler);
+router.delete("/:id", deletePostHandler);
 
 export default router;

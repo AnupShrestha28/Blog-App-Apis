@@ -4,16 +4,15 @@ import {
   updateUserDetails,
 } from "../services/userProfileService";
 
-export const getUserProfile = async (req: Request, res: Response) => {
+export const getUserProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const userId = req.user?.id;
-    if (!userId) {
-      res.status(401).json({ message: "Authentication required." });
-      return;
-    }
+    const result = await getUserDetails(userId);
 
-    const user = await getUserDetails(userId);
-    res.status(200).json(user);
+    res.status(result.statusCode).json(result);
   } catch (error) {
     res.status(500).json({
       error: error instanceof Error ? error.message : "Unknown error",
@@ -21,24 +20,14 @@ export const getUserProfile = async (req: Request, res: Response) => {
   }
 };
 
-export const updateUserProfile = async (req: Request, res: Response) => {
+export const updateUserProfile = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const userId = req.user?.id;
-    if (!userId) {
-      res.status(401).json({ message: "Authentication required." });
-      return;
-    }
+    const result = await updateUserDetails(req.user?.id, req.body);
 
-    const { username, email, oldPassword, newPassword } = req.body;
-
-    const updatedUser = await updateUserDetails(
-      userId,
-      username,
-      email,
-      oldPassword,
-      newPassword
-    );
-    res.status(200).json(updatedUser);
+    res.status(result.statusCode).json(result);
   } catch (error) {
     res.status(500).json({
       error: error instanceof Error ? error.message : "Unknown error",
