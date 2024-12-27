@@ -81,4 +81,28 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
    npm run dev
 
 ## API Endpoints
+
 ### Authentication
+- **Register**: `POST /api/users/register`
+- **Login**: `POST /api/users/login`
+
+### Blog Posts
+- **Create Post**: `POST /api/posts`
+- **Get All Posts**: `GET /api/posts`
+- **Get Post by ID**: `GET /api/posts/:id`
+
+### Comments
+- **Add Comment**: `POST /api/posts/:postId/comments`
+- **Update Comment**: `PATCH /api/posts/:postId/comments/:commentId`
+- **Delete Comment**: `DELETE /api/posts/:postId/comments/:commentId`
+- **Get Comments**: `GET /api/posts/:postId/comments`
+
+### Image Upload
+- **Upload Image**: `POST /api/posts/:postId/images`
+- **Update Image**: `PUT /api/posts/:postId/images/:imageId`
+- **Delete Image**: `DELETE /api/posts/:postId/images/:imageId`
+
+### User Profiles
+- **View Profile**: `GET /api/users/profile`
+- **Update Profile**: `PATCH /api/users/profile`
+
