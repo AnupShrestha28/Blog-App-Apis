@@ -56,6 +56,15 @@ export const getAllPosts = async () => {
       },
     });
 
+    if (posts.length === 0) {
+      return {
+        success: true,
+        statusCode: 200,
+        message: "There are no blogs available.",
+        data: [],
+      };
+    }
+
     return {
       success: true,
       statusCode: 200,
