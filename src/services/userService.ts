@@ -214,7 +214,22 @@ export const getUserById = async (id: string) => {
 
     const user = await prisma.user.findUnique({
       where: { id },
-      select: { id: true, username: true, email: true, role: true },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        role: true,
+        posts: {
+          select: {
+            id: true,
+            title: true,
+            content: true,
+            createdAt: true,
+            updatedAt: true,
+            images: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -228,11 +243,25 @@ export const getUserById = async (id: string) => {
       };
     }
 
+    if (user.posts.length === 0) {
+      return {
+        status: "success",
+        statusCode: 200,
+        data: { user },
+        message: "User retrieved successfully.",
+      };
+    }
+
+    const postsWithImages = user.posts.map((post) => ({
+      ...post,
+      images: post.images && post.images.length > 0 ? post.images : [],
+    }));
+
     return {
       status: "success",
       statusCode: 200,
-      data: { user },
-      message: "User retrieved successfully.",
+      data: { user: { ...user, posts: postsWithImages } },
+      message: "User and posts retrieved successfully.",
     };
   } catch (error) {
     return {
