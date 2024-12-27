@@ -41,6 +41,12 @@ A scalable backend solution for a blogging platform, built with **Node.js** and 
 
 ---
 
+## Database Design
+
+Below is the database design diagram:
+
+![Database Design](./database-design.png)
+
 ## Installation  
 
 ### Prerequisites  
