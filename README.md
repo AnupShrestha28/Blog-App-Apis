@@ -112,3 +112,7 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
 - **View Profile**: `GET /api/users/profile`
 - **Update Profile**: `PATCH /api/users/profile`
 
+### Admin Access (Super Admin)
+- **View All Users**: `GET /api/users`
+- **Delete User**: `DELETE /api/users/:id`
+- **View a User by ID**: `GET /api/users/:id`
