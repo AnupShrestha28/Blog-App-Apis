@@ -54,4 +54,7 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
 1. **Clone the repository**:  
    ```bash  
    git clone git@github.com:AnupShrestha28/associate-blog-app.git 
-   cd blog-app  
+   cd blog-app
+   
+2. Install dependencies:
+   ```npm install  
