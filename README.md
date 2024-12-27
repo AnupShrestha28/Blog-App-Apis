@@ -65,4 +65,17 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
    ```bash
    DATABASE_URL=your_postgres_database_url  
    JWT_SECRET=your_secret_key  
-   PORT=your_preferred_port  
+   PORT=your_port
+
+4. Run database migrations:
+   ```bash
+   npx prisma migrate dev
+
+5. Seed the database with Super Admin user:
+   Run the following command to seed the Super Admin user:
+   ```bash
+   npx ts-node src/scripts/seedSuperAdmin.ts
+
+6. Start the server:
+   ```bash
+   npm run dev  
