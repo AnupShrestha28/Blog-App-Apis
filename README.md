@@ -130,3 +130,8 @@ Swagger has been integrated to provide a detailed, interactive API documentation
 - **View All Users**: `GET /api/users`
 - **Delete User**: `DELETE /api/users/:id`
 - **View a User by ID**: `GET /api/users/:id`
+
+
+Database Design
+You can view the [Database Design]([url](https://docs.google.com/spreadsheets/d/1TS0P98fkaPfpy-1nxk1lgsul3GFN-E5cANbp7bhFVEA/edit?gid=0#gid=0)) on Google Sheets for a detailed structure of the database.
+
