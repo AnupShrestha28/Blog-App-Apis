@@ -55,6 +55,13 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
    ```bash  
    git clone git@github.com:AnupShrestha28/associate-blog-app.git 
    cd blog-app
+
+3. Set up environment variables:
+Create a .env file in the root directory with the following:
+   ```bash
+   DATABASE_URL=your_postgres_database_url  
+JWT_SECRET=your_secret_key  
+PORT=your_preferred_port  
    
 2. Install dependencies:
    ```bash
