@@ -57,4 +57,5 @@ A robust and scalable backend solution for a blogging platform, built with **Nod
    cd blog-app
    
 2. Install dependencies:
-   ```npm install  
+   ```bash
+   npm install  
